@@ -39,7 +39,23 @@ impl<'src> Lexer<'src> {
                 self.start = pos;
                 self.current = pos;
                 if let Some(tok) = self.match_single_char_token(c) {
-                    return Some(Ok(tok))
+                    return Some(Ok(tok));
+                }
+                if let Some(tok) = self.match_double_char_token(c) {
+                    return Some(Ok(tok));
+                }
+                let start_line = self.line;
+                let start_col = self.col;
+                if let Some(lit) = self.parse_identifier(c) {
+                    if let Some(tok) = self.match_keyword(lit, start_line, start_col) {
+                        return Some(Ok(tok));
+                    }
+                    let tok = Token{
+                        token_type: TokenType::Identifier{literal: lit},
+                        line: start_line,
+                        col: start_col
+                    };
+                    return Some(Ok(tok));
                 }
                 return Some(Err(LexError::UnexpectedCharacter(c)));
             }
@@ -75,15 +91,17 @@ impl<'src> Lexer<'src> {
 
     fn match_double_char_token(&mut self, c: char) -> Option<Token<'src>> {
         match c {
-            '=' => Some(self.switch('=', TokenType::EqualEqual, TokenType::Equal)),
+            '=' => Some(self.match_if_or('=', TokenType::EqualEqual,        TokenType::Equal)),
+            '!' => Some(self.match_if_or('=', TokenType::BangEqual,         TokenType::Bang)),
+            '<' => Some(self.match_if_or('=', TokenType::LeftArrowEqual,    TokenType::LeftArrow)),
+            '>' => Some(self.match_if_or('=', TokenType::RightArrowEqual,   TokenType::RightArrow)),
             _ => None,
         }
     }
 
-    
-    fn switch(&mut self, next_char: char, if_next_char: TokenType<'src>, if_not_next: TokenType<'src>) -> Token<'src> {
+    fn match_if_or(&mut self, _next_char: char, if_next_char: TokenType<'src>, if_not_next: TokenType<'src>) -> Token<'src> {
         match self.chars.peek() {
-            Some((pos, next_char)) => {
+            Some((pos, _next_char)) => {
                 let tok = Token {
                     token_type: if_next_char,
                     line: self.line,
@@ -103,6 +121,41 @@ impl<'src> Lexer<'src> {
                 self.col += 1;
                 return tok;
             }
+        }
+    }
+
+    fn parse_identifier(&mut self, c: char) -> Option<&'src str> {
+        if c.is_alphabetic() {
+            while let Some((pos, _next_char)) = self.chars.peek() {
+                if _next_char.is_alphanumeric() {
+                    self.current = *pos;
+                    self.col += 1;
+                    _ = self.chars.next();
+                } else {
+                    break;
+                }
+            }
+            return Some(&self.source[self.start..self.current]);
+        } else {
+            return None;
+        }
+    }
+
+    fn match_keyword(&mut self, lit: &str, line: u64, col: u64) -> Option<Token<'src>> {
+        match lit {
+            "begin" => Some(Token{token_type: TokenType::Begin, line: line, col: col}),
+            "end" => Some(Token{token_type: TokenType::End, line: line, col: col}),
+            "module" => Some(Token{token_type: TokenType::Module, line: line, col: col}),
+            "input" => Some(Token{token_type: TokenType::Input, line: line, col: col}),
+            "output" => Some(Token{token_type: TokenType::Output, line: line, col: col}),
+            "not" => Some(Token{token_type: TokenType::Not, line: line, col: col}),
+            "and" => Some(Token{token_type: TokenType::And, line: line, col: col}),
+            "nand" => Some(Token{token_type: TokenType::Nand, line: line, col: col}),
+            "or" => Some(Token{token_type: TokenType::Or, line: line, col: col}),
+            "nor" => Some(Token{token_type: TokenType::Nor, line: line, col: col}),
+            "xor" => Some(Token{token_type: TokenType::Xor, line: line, col: col}),
+            "xnor" => Some(Token{token_type: TokenType::Xnor, line: line, col: col}),
+            &_ => None,
         }
     }
 
