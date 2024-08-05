@@ -32,34 +32,34 @@ impl<'src> Lexer<'src> {
     }
 
     // fn scan_token(&mut self) -> Result<Token, String> {
-    fn next_token(&mut self) -> Option<LexResult> {
+    fn next_token(&mut self) -> LexResult {
         self.skip_whitespace();
         match self.chars.next() {
             Some((pos, c)) => {
                 self.start = pos;
                 self.current = pos;
                 if let Some(tok) = self.match_single_char_token(c) {
-                    return Some(Ok(tok));
+                    return Ok(tok);
                 }
                 if let Some(tok) = self.match_double_char_token(c) {
-                    return Some(Ok(tok));
+                    return Ok(tok);
                 }
                 let start_line = self.line;
                 let start_col = self.col;
                 if let Some(lit) = self.parse_identifier(c) {
                     if let Some(tok) = self.match_keyword(lit, start_line, start_col) {
-                        return Some(Ok(tok));
+                        return Ok(tok);
                     }
                     let tok = Token{
                         token_type: TokenType::Identifier{literal: lit},
                         line: start_line,
                         col: start_col
                     };
-                    return Some(Ok(tok));
+                    return Ok(tok);
                 }
-                return Some(Err(LexError::UnexpectedCharacter(c)));
+                return Err(LexError::UnexpectedCharacter(c));
             }
-            None => None,
+            None => Ok(Token{token_type: TokenType::Eof, line: line, col: col}),
         }
     }
 
@@ -99,9 +99,9 @@ impl<'src> Lexer<'src> {
         }
     }
 
-    fn match_if_or(&mut self, _next_char: char, if_next_char: TokenType<'src>, if_not_next: TokenType<'src>) -> Token<'src> {
-        match self.chars.peek() {
-            Some((pos, _next_char)) => {
+    fn match_if_or(&mut self, next_char: char, if_next_char: TokenType<'src>, if_not_next: TokenType<'src>) -> Token<'src> {
+        if let Some((pos, c)) = self.chars.peek() {
+            if *c == next_char {
                 let tok = Token {
                     token_type: if_next_char,
                     line: self.line,
@@ -111,8 +111,7 @@ impl<'src> Lexer<'src> {
                 self.col += 2;
                 _ = self.chars.next();
                 return tok;
-            }
-            _ => {
+            } else {
                 let tok = Token {
                     token_type: if_not_next,
                     line: self.line,
@@ -121,6 +120,14 @@ impl<'src> Lexer<'src> {
                 self.col += 1;
                 return tok;
             }
+        } else {
+            let tok = Token {
+                token_type: if_not_next,
+                line: self.line,
+                col: self.col,
+            };
+            self.col += 1;
+            return tok;
         }
     }
 
