@@ -47,6 +47,13 @@ pub enum TokenType<'src> {
     Xor,
     Xnor,
 
+    Lsl,
+    Lsr,
+    Asl,
+    Asr,
+    Rol,
+    Ror,
+
     Eof,
 }
 
