@@ -1,0 +1,99 @@
+// Array definition
+example : logic[ADDR_W-1:0] // index direction inferred
+// < points to highest index
+example : logic[ADDR_W-1 <: 0 ] // equivalent to "downto" in VHDL
+example : logic[0 :> ADDR_W-1 ] // equivalent to "to" in VHDL
+
+// IO Bundle with parameters
+@io bundle avalon_mm_slave < ADDR_W : integer, DATA_W : integer > begin 
+    address     : input logic[ADDR_W-1:0];
+    read        : input logic;
+    readdata    : output logic[DATA_W-1:0];
+    write       : input logic;
+    writedata   : input logic[DATA_W-1:0];
+end bundle;
+
+// Type Generics and Type Classes
+
+It would be desirable to be able to pass types as generics. 
+This would server as away to change the interface of general components.
+For example, and FIR filter may be used in both Intel and Xilinx FPGA's. 
+However, these venders have differing streaming interfaces ( Avalon ST and AXIS, respectively).
+The end user must decide which interface protocol they wish to natively support, and which to adapt to. 
+What we should be able to do is something as follows:
+
+module FIR <
+    StreamingInterfaceSink : type,
+    StreamingInterfaceSource : type,
+    DATA_W : integer
+> (
+    stream_in : StreamingInterfaceSink<DATA_W>,
+    stream_out : StreamingInterfaceSource<DATA_W>
+);
+
+... CODE HERE ...
+
+end module
+
+
+However, this presents a problem.
+In this example, the avalon streaming protocol can have different signal names from AXIS.
+This can actually lead to increase code complexity compared to what the code would be if we just created different version with a wrapper for each interface. 
+Also, there is no compile time constraint as to what type can be passed in.
+What if I pass in a memory mapped interface by accident that has similar names to the streaming interface, and it compiles without warning? 
+This can be addressed by assigning both an AXIS and Avalon ST interface to a TypeClass with predifined functions/signal aliases so that 
+the component may be designed around the TypeClass that can be one of several streaming interfaces.
+
+module FIR < 
+    StreamingInterfaceSink : StreamingTypeClass, <== Constrain with TypeClass
+    StreamingInterfaceSource : StreamingTypeClass,
+    DATA_W : integer
+> (
+    stream_in : StreamingInterfaceSink<DATA_W>,
+    stream_out : StreamingInterfaceSource<DATA_W>
+);
+
+... CODE HERE ...
+
+end module
+
+
+// Generic Synatx and Alias
+
+Module declarations should have explicit generic and port keywords to avoid ambiguity 
+
+module module_name <
+    generic_decl,
+> (
+    port_decl,
+);
+
+when instantiated, the keywords are excluded
+
+instance_name : module_name<generics,> (ports,);
+
+This will facilitate alias which will allow the user to define aliases for modules with many generics
+
+-- Explicit alias type
+alias module_alias_name : module = module_name<generics,>;
+-- Implicit alias type
+alias module_alias_name := module_name<generics,>;
+
+which can be used as follows :
+
+instance_name : module_alias_name (ports,);
+
+
+// Aliases
+
+Aliases can be used to create aliases for modules or types with man attributes
+
+-- Explicit type 
+alias type_alias_name : type = type_attritubes type;
+-- Implicit type 
+alias type_alias_name := type_attritubes type;
+
+-- Example :
+alias sbit : type = signed bit;
+
+alias module_alias_name : module = module_name ( generics, );

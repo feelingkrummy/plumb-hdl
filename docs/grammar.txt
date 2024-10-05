@@ -1,0 +1,15 @@
+
+
+Expr <- LogicalExpr
+LogicalExpr <- RelationalExpr ( ( "and" | "nand" | "or" | "nor" | "xor" | "xnor" ) RelationalExpr )*
+RelationalExpr <- ShiftExpr ( ("==" | "!=" | "<" | "<=" | ">" | ">=") ShiftExpr )*
+ShiftExpr <- AddSubExpr ( ( "lsl" | "lsr" | "asl" | "asr" | "rol" | "ror" ) AddSubExpr )*
+AddSubExpr <- MutlDivExpr ( ( "+" | "-" ) MultDivExpr )*
+MultDivExpr <- PowerExpr ( ( "*" | "/" | "mod" ) PowerExpr )*
+PowerExpr <- UnaryExpr ( "**" UnaryExpr )*
+UnaryExpr <- ( "not" | "-" | ""and" | "nand" | "or" | "nor" | "xor" | "xnor" ) Primary
+
+
+
+
+
