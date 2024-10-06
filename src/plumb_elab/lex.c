@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-static int is_single_char_token(PlumbLexer* lex, PlumbToken* tok) {
+static int match_single_char_token(PlumbLexer* lex, PlumbToken* tok) {
     switch( lex->src[lex->current] ) {
         case '(' :
             tok->type = PTT_LeftParen;
@@ -61,8 +61,10 @@ static int is_single_char_token(PlumbLexer* lex, PlumbToken* tok) {
     }
 }
 
-static int is_double_char_token(lex, &tok) {
-
+static int is_double_char_token(PlumbLexer* lex, PlumbToken* tok) {
+    switch( lex->src[lex->current] ) {
+        case '*' :
+    }
 }
 
 PlumbLexer create_plumb_lexer(str8 src) {
@@ -76,13 +78,14 @@ PlumbLexer create_plumb_lexer(str8 src) {
 PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
     PlumbToken tok = {0};
 
-    if (is_single_char_token(lex, &tok)) {
+    if (match_single_char_token(lex, &tok)) {
         lex->current += 1;
         lex->start = lex->current;
         return tok;
     }
 
-    if (is_double_char_token(lex, &tok)) {
+    int advance = 0;
+    if ( advance = match_double_char_token(lex, &tok) ) {
         lex->current += 2;
         lex->start = lex->current;
         return tok;
