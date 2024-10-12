@@ -1,8 +1,8 @@
+#include <stdint.h>
 
-typedef Utf8Char {
-    uint32_t char;
+typedef struct {
+    uint32_t val;
     uint32_t len;
-}
+} Utf8Cp;
 
-Utf8Char utf8_decode(const char* str);
-// uint8_t utf8_length(uint32_t cp);
+Utf8Cp utf8_decode(const char* str);
