@@ -14,7 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#ifndef STR_H_
+#define STR_H_
+
+#define STR8(s) (str8){.str=(uint8_t*)s, .len=(sizeof(s)/sizeof(*s))-1}
+
 typedef struct {
-    uint32_t len;
+    uint64_t len;
     uint8_t* ptr;
 } str8;
+
+int str8_cmp(str8 a, str8 b);
+
+#endif

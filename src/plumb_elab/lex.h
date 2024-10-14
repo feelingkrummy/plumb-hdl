@@ -25,8 +25,8 @@ limitations under the License.
 
 typedef struct {
     str8 src; 
-    uint32_t start_pos;
-    uint32_t decode_pos;
+    uint64_t start_pos;
+    uint64_t decode_pos;
     PlumbTokenLoc loc;
     Utf8Cp c[2];
 } PlumbLexer

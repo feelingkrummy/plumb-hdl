@@ -15,15 +15,14 @@ static uint32_t get_length(const uint8_t* s) {
 }
 
 
-Utf8Cp utf8_decode(const char* str) {
-    const uint8_t* s = (uint8_t*)str;
+Utf8Cp utf8_decode(const uint8_t* str) {
 
-    if ( s[0] < 0x7F ) {
+    if ( str[0] < 0x7F ) {
         return (Utf8Cp){ .val = (uint32_t)s[0], .len = 1 };
     }
    
     Utf8Cp cp = {0};
-    cp.len = get_length(s);
+    cp.len = get_length(str);
     if (cp.len == 0) {
         cp.val = UINT32_MAX;
         return cp;
@@ -31,7 +30,7 @@ Utf8Cp utf8_decode(const char* str) {
 
     cp.val = s[0] & masks[cp.len-1];
     for (int i = 1; i < cp.len; i++) {
-        uint8_t c = s[i];
+        uint8_t c = str[i];
         if ((c >> 6) != 0b10) {
             cp.val = UINT32_MAX;
             cp.len = 0;
