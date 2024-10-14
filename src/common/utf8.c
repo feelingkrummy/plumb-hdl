@@ -41,3 +41,11 @@ Utf8Cp utf8_decode(const char* str) {
     }
     return cp;
 }
+
+int utf8_isalphanumeric(Utf8Cp cp) {
+    return iswalnum(cp.val);
+}
+
+int utf8_isalpha(Utf8Cp cp) {
+    return iswalpha(cp.val);
+}

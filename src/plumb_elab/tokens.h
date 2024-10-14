@@ -119,7 +119,14 @@ const char* plumbtokentype_strings[] = {
 };
 
 typedef struct {
-    uint32_t pos;
+    uint32_t line;
+    uint32_t col;
+} PlumbTokenLoc;
+
+#define INIT_LOCATION {.line=1, .col=1}
+
+typedef struct {
+    PlumbTokenLoc loc;
     PlumbTokenType type;
 } PlumbToken;
 

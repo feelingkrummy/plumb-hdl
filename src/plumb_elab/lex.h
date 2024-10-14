@@ -20,11 +20,15 @@ limitations under the License.
 #include <stdint.h>
 
 #include "common/types.h"
+#include "common/utf8.h"
+#include "tokens.h"
 
 typedef struct {
     str8 src; 
-    uint32_t start;
-    uint32_t current;
+    uint32_t start_pos;
+    uint32_t decode_pos;
+    PlumbTokenLoc loc;
+    Utf8Cp c[2];
 } PlumbLexer
 
 PlumbLexer create_plumb_lexer(str8 source);

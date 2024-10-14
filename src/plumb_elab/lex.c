@@ -14,81 +14,184 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-static int match_single_char_token(PlumbLexer* lex, PlumbToken* tok) {
-    switch( lex->src[lex->current] ) {
+static void advance(PlumbLexer* lex) {
+    lex->loc.col += 1;
+    lex->start_pos += c[0].len;
+    lex->c[0] = lex->c[1];
+    Utf8Cp cp = utf8_decode(lex->src.str);
+    if (cp.val != UINT32_MAX) {
+        // If we don't have a decode error, advance the decode_pos
+        // If we do have a deocde error, don't advance, lexer has errored
+        lex->decode_pos += cp.len;
+    }
+    lex->c[1] = cp;
+}
+
+static int match_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
+    switch( lex->c[0].val ) {
         case '(' :
-            tok->type = PTT_LeftParen;
-            tok->pos = lex->current;
+            token_out->type = PTT_LeftParen;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case ')' :
-            tok->type = PTT_RightParen;
-            tok->pos = lex->current;
+            token_out->type = PTT_RightParen;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case '{' :
-            tok->type = PTT_LeftBrace;
-            tok->pos = lex->current;
+            token_out->type = PTT_LeftBrace;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case '}' :
-            tok->type = PTT_RightBrace;
-            tok->pos = lex->current;
+            token_out->type = PTT_RightBrace;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case '[' :
-            tok->type = PTT_LeftBracket;
-            tok->pos = lex->current;
+            token_out->type = PTT_LeftBracket;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case ']' :
-            tok->type = PTT_LeftBracket;
-            tok->pos = lex->current;
+            token_out->type = PTT_LeftBracket;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case '+' : 
-            tok->type = PTT_Plus;
-            tok->pos = lex->current;
+            token_out->type = PTT_Plus;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case '-' : 
-            tok->type = PTT_Minus;
-            tok->pos = lex->current;
+            token_out->type = PTT_Minus;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case '/' : 
-            tok->type = PTT_Slash;
-            tok->pos = lex->current;
+            token_out->type = PTT_Slash;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         case ';' : 
-            tok->type = PTT_SemiColon;
-            tok->pos = lex->current;
+            token_out->type = PTT_SemiColon;
+            token_out->loc = lex->loc;
+            advance(lex);
             return 1;
         default : 
             return 0;
     }
 }
 
-static int is_double_char_token(PlumbLexer* lex, PlumbToken* tok) {
-    switch( lex->src[lex->current] ) {
+static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
+    switch( lex->c[0].val ) {
         case '*' :
+            if (lex->c[1].val == '*') {
+                token_out->type = PTT_StarStar;
+                token_out->loc = lex->loc;
+                advance(lex);
+                advance(lex);
+            } else {
+                token_out->type = PTT_Star;
+                token_out->loc = lex->loc;
+                advance(lex);
+            }
+            return 1;
+        case '=' :
+            if (lex->c[1].val == '=') {
+                token_out->type = PTT_EqualEqual;
+                token_out->loc = lex->loc;
+                advance(lex);
+                advance(lex);
+            } else {
+                token_out->type = PTT_Equal;
+                token_out->loc = lex->loc;
+                advance(lex);
+            }
+            return 1;
+        case '!' :
+            if (lex->c[1].val == '=') {
+                token_out->type = PTT_BangEqual;
+                token_out->loc = lex->loc;
+                advance(lex);
+                advance(lex);
+            } else {
+                token_out->type = PTT_Bang;
+                token_out->loc = lex->loc;
+                advance(lex);
+            }
+            return 1;
+        case '<' :
+            if (lex->c[1].val == '=') {
+                token_out->type = PTT_LeftArrowEqual;
+                token_out->loc = lex->loc;
+                advance(lex);
+                advance(lex);
+            } else {
+                token_out->type = PTT_LeftArrow;
+                token_out->loc = lex->loc;
+                advance(lex);
+            }
+            return 1;
+        case '>' :
+            if (lex->c[1].val == '=') {
+                token_out->type = PTT_RightArrowEqual;
+                token_out->loc = lex->loc;
+                advance(lex);
+                advance(lex);
+            } else {
+                token_out->type = PTT_RightArrow;
+                token_out->loc = lex->loc;
+                advance(lex);
+            }
+            return 1;
+        default: 
+            return 0;
     }
 }
 
-PlumbLexer create_plumb_lexer(str8 src) {
-    return (PlumbLexer){
-        .src = src,
-        .start = 0,
-        .current = 0,
+static str8 get_lexeme(PlumbLexer* lex) {
+    str8 lexeme = {
+        .str = lex->src.str + start_pos,
+        .len = 0
     };
+
+    do {
+        lexeme += lex->c[0];
+        advance();
+    } while ( utf8_isalphanumeric(lex->c[0]) || (lex->c[0].val == '_') );
+
+    return lexeme;
+}
+
+PlumbLexer create_plumb_lexer(str8 src) {
+    PlumbLexer lex = {0};
+    lex.src = src;
+    lex.loc = INIT_LOCATION;
+
+    // Initialize lex characters
+    advance(lex);
+    advance(lex);
+
+    lex.start_pos = 0;
+
+    return lex;
 }
 
 PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
     PlumbToken tok = {0};
 
     if (match_single_char_token(lex, &tok)) {
-        lex->current += 1;
-        lex->start = lex->current;
         return tok;
     }
 
-    int advance = 0;
-    if ( advance = match_double_char_token(lex, &tok) ) {
-        lex->current += 2;
-        lex->start = lex->current;
+    if (match_double_char_token(lex, &tok)) {
         return tok;
+    }
+
+    if ( utf8_isalpha(lex->c[0]) || (lex->c[0].val == '_') ) {
+        str8 lexeme = get_lexeme(lex);
     }
 }
 
