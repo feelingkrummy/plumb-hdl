@@ -1,8 +1,8 @@
-#include "common/utf8.h"
-#include "common/utf8.c"
-
 #include "common/kassert.h"
 #include "common/kassert.c"
+
+#include "common/utf8.h"
+#include "common/utf8.c"
 
 char* characters =
     "ABCD"

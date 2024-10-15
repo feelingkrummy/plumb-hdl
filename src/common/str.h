@@ -17,7 +17,9 @@ limitations under the License.
 #ifndef STR_H_
 #define STR_H_
 
-#define STR8(s) (str8){.str=(uint8_t*)s, .len=(sizeof(s)/sizeof(*s))-1}
+#include <stdint.h>
+
+#define STR8(s) (str8){.ptr=(uint8_t*)s, .len=(sizeof(s)/sizeof(*s))-1}
 
 typedef struct {
     uint64_t len;
