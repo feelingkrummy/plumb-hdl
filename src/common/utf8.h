@@ -9,3 +9,4 @@ Utf8Cp utf8_decode(const uint8_t* str);
 
 int utf8_isalphanumeric(Utf8Cp cp);
 int utf8_isalpha(Utf8Cp cp);
+int utf8_isspace(Utf8Cp cp);

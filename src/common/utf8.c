@@ -1,3 +1,8 @@
+#include <stdint.h>
+#include <wctype.h>
+
+#include "common/utf8.h"
+
 static uint8_t masks[] = {
     0x7F,
     0x1F,
@@ -16,9 +21,8 @@ static uint32_t get_length(const uint8_t* s) {
 
 
 Utf8Cp utf8_decode(const uint8_t* str) {
-
     if ( str[0] < 0x7F ) {
-        return (Utf8Cp){ .val = (uint32_t)s[0], .len = 1 };
+        return (Utf8Cp){ .val = (uint32_t)str[0], .len = 1 };
     }
    
     Utf8Cp cp = {0};
@@ -28,7 +32,7 @@ Utf8Cp utf8_decode(const uint8_t* str) {
         return cp;
     }
 
-    cp.val = s[0] & masks[cp.len-1];
+    cp.val = str[0] & masks[cp.len-1];
     for (int i = 1; i < cp.len; i++) {
         uint8_t c = str[i];
         if ((c >> 6) != 0b10) {
@@ -47,4 +51,8 @@ int utf8_isalphanumeric(Utf8Cp cp) {
 
 int utf8_isalpha(Utf8Cp cp) {
     return iswalpha(cp.val);
+}
+
+int utf8_isspace(Utf8Cp cp) {
+    return iswspace(cp.val);
 }

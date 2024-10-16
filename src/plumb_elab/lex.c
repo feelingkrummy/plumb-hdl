@@ -13,12 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+#include "plumb_elab/lex.h"
 
 static void advance(PlumbLexer* lex) {
     lex->loc.col += 1;
-    lex->start_pos += c[0].len;
+    lex->start_pos += lex->c[0].len;
     lex->c[0] = lex->c[1];
-    Utf8Cp cp = utf8_decode(lex->src.str);
+    Utf8Cp cp = utf8_decode(lex->src.ptr + lex->decode_pos);
     if (cp.val != UINT32_MAX) {
         // If we don't have a decode error, advance the decode_pos
         // If we do have a deocde error, don't advance, lexer has errored
@@ -27,7 +28,18 @@ static void advance(PlumbLexer* lex) {
     lex->c[1] = cp;
 }
 
-static int match_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
+static void skip_whitespace(PlumbLexer* lex) {
+    while ( utf8_isspace(lex->c[0]) ) {
+        int val = lex->c[0].val;
+        advance(lex);
+        if ( val == '\n' ) {
+            lex->loc.line += 1;
+            lex->loc.col = 0;
+        }
+    }
+}
+
+static int is_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
     switch( lex->c[0].val ) {
         case '(' :
             token_out->type = PTT_LeftParen;
@@ -153,13 +165,13 @@ static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 
 static str8 get_lexeme(PlumbLexer* lex) {
     str8 lexeme = {
-        .str = lex->src.str + start_pos, // Pointer arithmetic! D:
+        .ptr = lex->src.ptr + lex->start_pos, // Pointer arithmetic! D:
         .len = 0
     };
 
     do {
         lexeme.len += lex->c[0].len;
-        advance();
+        advance(lex);
     } while ( utf8_isalphanumeric(lex->c[0]) || (lex->c[0].val == '_') );
 
     return lexeme;
@@ -175,12 +187,12 @@ static int is_keyword(PlumbLexer* lex, str8 lexeme, PlumbToken *token_out) {
     while ( low <= high ) {
         mid = low + (high - low) / 2;
         cond = str8_cmp(lexeme, plumbtokentype_str8[mid]);
-        if ( cont < 0 ) {
+        if ( cond < 0 ) {
             high = mid - 1;
         } else if ( cond > 0 ) {
             low = mid + 1;
         } else {
-            token_out->type = (PlumbTokenTyp)mid;
+            token_out->type = (PlumbTokenType)mid;
             token_out->loc = lex->loc;
             return 1;
         }
@@ -194,8 +206,8 @@ PlumbLexer create_plumb_lexer(str8 src) {
     lex.loc = INIT_LOCATION;
 
     // Initialize lex characters
-    advance(lex);
-    advance(lex);
+    advance(&lex);
+    advance(&lex);
 
     lex.start_pos = 0;
 
@@ -205,23 +217,25 @@ PlumbLexer create_plumb_lexer(str8 src) {
 PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
     PlumbToken tok = {0};
 
-    if (match_single_char_token(lex, &tok)) {
+    skip_whitespace(lex);
+
+    if (is_single_char_token(lex, &tok)) {
         return tok;
     }
 
-    if (match_double_char_token(lex, &tok)) {
+    if (is_double_char_token(lex, &tok)) {
         return tok;
     }
 
     if ( utf8_isalpha(lex->c[0]) || (lex->c[0].val == '_') ) {
         str8 lexeme = get_lexeme(lex);
         if ( is_keyword(lex, lexeme, &tok) ) {
-            return token;
+            return tok;
         }
-        tok.type = PPT_Ident;
+        tok.type = PTT_Ident;
         tok.loc = lex->loc;
         tok.ident = lexeme;
-        return token
+        return tok;
     }
     
     tok.type = PTT_Invalid;
@@ -229,6 +243,6 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
     return tok;
 }
 
-TokenList plumb_lexer_scan_entire_file(str8 src) {
-    PlumbLexer lex = create_plumb_lexer(src);
-}
+// TokenList plumb_lexer_scan_entire_file(str8 src) {
+//     PlumbLexer lex = create_plumb_lexer(src);
+// }

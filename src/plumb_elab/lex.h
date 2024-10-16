@@ -19,7 +19,7 @@ limitations under the License.
 
 #include <stdint.h>
 
-#include "common/types.h"
+#include "common/str.h"
 #include "common/utf8.h"
 #include "tokens.h"
 
@@ -29,7 +29,7 @@ typedef struct {
     uint64_t decode_pos;
     PlumbTokenLoc loc;
     Utf8Cp c[2];
-} PlumbLexer
+} PlumbLexer;
 
 PlumbLexer create_plumb_lexer(str8 source);
 PlumbToken plumb_lexer_next_token(PlumbLexer* lex);
