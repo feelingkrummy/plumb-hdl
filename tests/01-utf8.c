@@ -1,8 +1,6 @@
-#include "common/kassert.h"
-#include "common/kassert.c"
+#include <criterion/criterion.h> 
 
 #include "common/utf8.h"
-#include "common/utf8.c"
 
 char* characters =
     "ABCD"
@@ -28,23 +26,22 @@ const Utf8Cp expected[] = {
     { .val = 0x1FAE1,   .len = 4 }
 };
 
-int main(void) {
+Test(utf8, decode) {
     int len = sizeof(expected)/sizeof(Utf8Cp); 
-    char* current = characters; 
+    uint8_t* current = (uint8_t*)characters; 
 
     for ( int i = 0; i < len; i++ ) {
         Utf8Cp cp = utf8_decode(current);
 
-        KASSERT_MSG(cp.val == expected[i].val,
+        cr_assert(cp.val == expected[i].val,
                 "Iter %d : Decoded val 0x%0X is not expected 0x%0X",
                 i, cp.val, expected[i].val );
 
-        KASSERT_MSG(cp.len == expected[i].len,
+        cr_assert(cp.len == expected[i].len,
                 "Iter %d : Decoded len %d is not expected %d",
                 i, cp.len, expected[i].len );
 
         current += cp.len;
     }
 
-    return 0;
 }
