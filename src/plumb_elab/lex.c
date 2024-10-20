@@ -13,6 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+#include <stdio.h>
+
 #include "plumb_elab/lex.h"
 
 static void advance(PlumbLexer* lex) {
@@ -20,10 +22,12 @@ static void advance(PlumbLexer* lex) {
     lex->start_pos += lex->c[0].len;
     lex->c[0] = lex->c[1];
     Utf8Cp cp = utf8_decode(lex->src.ptr + lex->decode_pos);
-    if (cp.val != UINT32_MAX) {
+    uint64_t new_decode_pos = lex->decode_pos + cp.len;
+    if (cp.val != UINT32_MAX || new_decode_pos < lex->src.len) {
         // If we don't have a decode error, advance the decode_pos
         // If we do have a deocde error, don't advance, lexer has errored
-        lex->decode_pos += cp.len;
+        // lex->decode_pos += cp.len;
+        lex->decode_pos = new_decode_pos;
     }
     lex->c[1] = cp;
 }
@@ -67,7 +71,7 @@ static int is_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
             advance(lex);
             return 1;
         case ']' :
-            token_out->type = PTT_LeftBracket;
+            token_out->type = PTT_RightBracket;
             token_out->loc = lex->loc;
             advance(lex);
             return 1;
@@ -83,6 +87,11 @@ static int is_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
             return 1;
         case '/' : 
             token_out->type = PTT_Slash;
+            token_out->loc = lex->loc;
+            advance(lex);
+            return 1;
+        case ':' : 
+            token_out->type = PTT_Colon;
             token_out->loc = lex->loc;
             advance(lex);
             return 1;
@@ -218,6 +227,12 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
     PlumbToken tok = {0};
 
     skip_whitespace(lex);
+
+    if ( lex->c[0].val == 0 ) {
+        tok.type = PTT_Eof;
+        tok.loc = lex->loc;
+        return tok;
+    }
 
     if (is_single_char_token(lex, &tok)) {
         return tok;
