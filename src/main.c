@@ -16,7 +16,7 @@ limitations under the License.
 
 #include <stdio.h>
 
-#include "plumb_elab/tokens.h"
+#include "plumb-elab/tokens.h"
 #include "common/types.h"
 
 int main(void) {

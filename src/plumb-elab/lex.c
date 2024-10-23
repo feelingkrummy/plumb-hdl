@@ -15,7 +15,7 @@ limitations under the License.
 */
 #include <stdio.h>
 
-#include "plumb_elab/lex.h"
+#include "plumb-elab/lex.h"
 
 static void advance(PlumbLexer* lex) {
     lex->loc.col += 1;

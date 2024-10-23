@@ -1,5 +1,5 @@
 #include "common/str.h"
-#include "plumb_elab/tokens.h"
+#include "plumb-elab/tokens.h"
 
 const str8 plumbtokentype_str8[] = {
     [PTT_Invalid]           = STR8("Invalid"),
