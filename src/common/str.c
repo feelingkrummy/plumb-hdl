@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "str.h"
+#include "common/str.h"
 
 int str8_cmp(str8 a, str8 b) {
     uint64_t len = ( a.len < b.len ) ? a.len : b.len;

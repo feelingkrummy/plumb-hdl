@@ -21,9 +21,9 @@ limitations under the License.
 #include <stdlib.h>
 #include <string.h>
 
-#include "kassert/kassert.h"
-#include "mem/mem.h"
-#include "mem/arena.h"
+#include "common/kassert.h"
+#include "common/mem/mem.h"
+#include "common/mem/arena.h"
 
 //
 // Private function

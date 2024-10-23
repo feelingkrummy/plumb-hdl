@@ -18,7 +18,7 @@ limitations under the License.
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "mem/mem.h"
+#include "common/mem/mem.h"
 
 bool is_power_of_two(size_t value) {
     return (value & (value - 1)) == 0;

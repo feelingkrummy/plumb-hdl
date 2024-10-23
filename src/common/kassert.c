@@ -17,7 +17,7 @@ limitations under the License.
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "kassert.h"
+#include "common/kassert.h"
 
 void print_error(
         // AssertLevel level,
