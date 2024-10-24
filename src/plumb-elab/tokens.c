@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "common/str.h"
 #include "plumb-elab/tokens.h"
 
@@ -50,3 +52,11 @@ const str8 plumbtokentype_str8[] = {
     // End Keywords
 
 };
+
+void destroy_token_list(TokenList* list) {
+    list->cap = 0;
+    list->len = 0;
+    if (list->tokens != NULL) {
+        free(list->tokens);
+    }
+}

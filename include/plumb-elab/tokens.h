@@ -93,4 +93,6 @@ typedef struct {
     PlumbToken* tokens;
 } TokenList;
 
+void destroy_token_list(TokenList* list);
+
 #endif

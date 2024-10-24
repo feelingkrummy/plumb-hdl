@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "plumb-elab/lex.h"
 
@@ -258,6 +259,28 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
     return tok;
 }
 
-// TokenList plumb_lexer_scan_entire_file(str8 src) {
-//     PlumbLexer lex = create_plumb_lexer(src);
-// }
+TokenList plumb_lexer_scan_entire_file(str8 src) {
+    PlumbLexer lex = create_plumb_lexer(src);
+    TokenList list = {0};
+
+    // This is a guess as to how many tokens we'll need
+    // If text is ASCII (as it likely will) we'll only need
+    // to resize once or twice
+    // If the text is all 4 byte UTF-8 chars (highly unlikely)
+    // we only use half this memory
+    uint64_t init_cap = src.len/2;
+    list.cap = init_cap;
+    list.tokens = calloc(init_cap, sizeof(PlumbToken));
+
+    Token tok = {0};
+    do {
+        tok = plumb_lexer_next_token(&lex);
+        list.tokens[list.len++] = tok;
+        if (list.len == list.cap) {
+            list.cap += list.cap/2;
+            list.tokens = realloc(list.tokens, list.cap*sizeof(PlumbToken));
+        }
+    } while( tok.type != PTT_Eof && tok.type != PTT_Invalid );
+
+    return list;
+}
