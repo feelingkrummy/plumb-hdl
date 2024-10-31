@@ -30,7 +30,7 @@ int main(void) {
         printf("Token!\n");
     }
 
-    tok.type = PTT_And;
+    tok.type = PLUMB_TOKEN_AND;
     if ( !tok.type ) {
         printf("Not token!\n");
     } else {
