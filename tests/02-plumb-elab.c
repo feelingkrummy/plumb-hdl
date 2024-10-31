@@ -4,8 +4,8 @@
 #include <criterion/criterion.h>
 
 #include "common/str.h"
-#include "plumb_elab/tokens.h"
-#include "plumb_elab/lex.h"
+#include "plumb-elab/tokens.h"
+#include "plumb-elab/lex.h"
 
 Test(plumb_elab, good_keywords) {
 
@@ -16,19 +16,19 @@ Test(plumb_elab, good_keywords) {
     };
 
     PlumbTokenType expected_token_types[] = {
-        PTT_And,
-        PTT_Begin,
-        PTT_End,
-        PTT_Input,
-        PTT_Logic,
-        PTT_Module,
-        PTT_Nand,
-        PTT_Nor,
-        PTT_Not,
-        PTT_Or,
-        PTT_Output,
-        PTT_Xnor,
-        PTT_Xor
+        PLUMB_TOKEN_AND,
+        PLUMB_TOKEN_BEGIN,
+        PLUMB_TOKEN_END,
+        PLUMB_TOKEN_INPUT,
+        PLUMB_TOKEN_LOGIC,
+        PLUMB_TOKEN_MODULE,
+        PLUMB_TOKEN_NAND,
+        PLUMB_TOKEN_NOR,
+        PLUMB_TOKEN_NOT,
+        PLUMB_TOKEN_OR,
+        PLUMB_TOKEN_OUTPUT,
+        PLUMB_TOKEN_XNOR,
+        PLUMB_TOKEN_XOR
     };
     int expected_len = sizeof(expected_token_types)/sizeof(PlumbTokenType);
     
@@ -53,8 +53,8 @@ Test(plumb_elab, bad_keywords) {
     PlumbLexer lex = create_plumb_lexer(bad_keywords);
 
     PlumbToken tok = {0};
-    while ( (tok = plumb_lexer_next_token(&lex)).type != PTT_Eof && iter < MAX_ITER) {
-        for (int type = PTT_And; type <= PTT_Xor; type += 1) {
+    while ( (tok = plumb_lexer_next_token(&lex)).type != PLUMB_TOKEN_EOF && iter < MAX_ITER) {
+        for (int type = PLUMB_TOKEN_AND; type <= PLUMB_TOKEN_XOR; type += 1) {
             cr_assert(tok.type != type);
         }
         iter += 1;
@@ -67,17 +67,17 @@ Test(plumb_elab, single_char_tokens) {
     str8 single_char_test = STR8("(){}[]+-/:;");
 
     PlumbTokenType expected_types[] = {
-        PTT_LeftParen, 
-        PTT_RightParen, 
-        PTT_LeftBrace, 
-        PTT_RightBrace, 
-        PTT_LeftBracket, 
-        PTT_RightBracket, 
-        PTT_Plus, 
-        PTT_Minus, 
-        PTT_Slash, 
-        PTT_Colon, 
-        PTT_SemiColon
+        PLUMB_TOKEN_LEFTPAREN, 
+        PLUMB_TOKEN_RIGHTPAREN, 
+        PLUMB_TOKEN_LEFTBRACE, 
+        PLUMB_TOKEN_RIGHTBRACE, 
+        PLUMB_TOKEN_LEFTBRACKET, 
+        PLUMB_TOKEN_RIGHTBRACKET, 
+        PLUMB_TOKEN_PLUS, 
+        PLUMB_TOKEN_MINUS, 
+        PLUMB_TOKEN_SLASH, 
+        PLUMB_TOKEN_COLON, 
+        PLUMB_TOKEN_SEMICOLON
     };
     int expected_len = sizeof(expected_types)/sizeof(PlumbTokenType);
 
@@ -95,16 +95,16 @@ Test(plumb_elab, double_char_tokens) {
     str8 single_char_test = STR8("* ** = == ! != < <= > >=");
 
     PlumbTokenType expected_types[] = {
-        PTT_Star, 
-        PTT_StarStar, 
-        PTT_Equal, 
-        PTT_EqualEqual, 
-        PTT_Bang, 
-        PTT_BangEqual, 
-        PTT_LeftArrow, 
-        PTT_LeftArrowEqual, 
-        PTT_RightArrow, 
-        PTT_RightArrowEqual, 
+        PLUMB_TOKEN_STAR, 
+        PLUMB_TOKEN_STARSTAR, 
+        PLUMB_TOKEN_EQUAL, 
+        PLUMB_TOKEN_EQUALEQUAL, 
+        PLUMB_TOKEN_BANG, 
+        PLUMB_TOKEN_BANGEQUAL, 
+        PLUMB_TOKEN_LEFTARROW, 
+        PLUMB_TOKEN_LEFTARROWEQUAL, 
+        PLUMB_TOKEN_RIGHTARROW, 
+        PLUMB_TOKEN_RIGHTARROWEQUAL, 
     };
     int expected_len = sizeof(expected_types)/sizeof(PlumbTokenType);
 

@@ -20,53 +20,53 @@ limitations under the License.
 #include <stdint.h>
 
 typedef enum PlumbTokenType {
-    PTT_Invalid = 0, 
-    PTT_Eof, 
+    PLUMB_TOKEN_INVALID = 0, 
+    PLUMB_TOKEN_EOF, 
     
     // Single Char Tokens
-    PTT_LeftParen, 
-    PTT_RightParen, 
-    PTT_LeftBrace, 
-    PTT_RightBrace, 
-    PTT_LeftBracket, 
-    PTT_RightBracket, 
-    PTT_Plus, 
-    PTT_Minus, 
-    PTT_Slash, 
-    PTT_Colon, 
-    PTT_SemiColon, 
+    PLUMB_TOKEN_LEFTPAREN, 
+    PLUMB_TOKEN_RIGHTPAREN, 
+    PLUMB_TOKEN_LEFTBRACE, 
+    PLUMB_TOKEN_RIGHTBRACE, 
+    PLUMB_TOKEN_LEFTBRACKET, 
+    PLUMB_TOKEN_RIGHTBRACKET, 
+    PLUMB_TOKEN_PLUS, 
+    PLUMB_TOKEN_MINUS, 
+    PLUMB_TOKEN_SLASH, 
+    PLUMB_TOKEN_COLON, 
+    PLUMB_TOKEN_SEMICOLON, 
 
     // Double Char Token
-    PTT_Star, 
-    PTT_StarStar, 
-    PTT_Equal, 
-    PTT_EqualEqual, 
-    PTT_Bang, 
-    PTT_BangEqual, 
-    PTT_LeftArrow, 
-    PTT_LeftArrowEqual, 
-    PTT_RightArrow, 
-    PTT_RightArrowEqual, 
+    PLUMB_TOKEN_STAR, 
+    PLUMB_TOKEN_STARSTAR, 
+    PLUMB_TOKEN_EQUAL, 
+    PLUMB_TOKEN_EQUALEQUAL, 
+    PLUMB_TOKEN_BANG, 
+    PLUMB_TOKEN_BANGEQUAL, 
+    PLUMB_TOKEN_LEFTARROW, 
+    PLUMB_TOKEN_LEFTARROWEQUAL, 
+    PLUMB_TOKEN_RIGHTARROW, 
+    PLUMB_TOKEN_RIGHTARROWEQUAL, 
     
-    PTT_Ident,
+    PLUMB_TOKEN_IDENT,
    
     // Begin Keywords
     // These must be in alphabetical order
     // so the is_keyword binary search works
     // correctly
-    PTT_And, 
-    PTT_Begin, 
-    PTT_End, 
-    PTT_Input, 
-    PTT_Logic, 
-    PTT_Module, 
-    PTT_Nand, 
-    PTT_Nor, 
-    PTT_Not, 
-    PTT_Or, 
-    PTT_Output, 
-    PTT_Xnor,
-    PTT_Xor
+    PLUMB_TOKEN_AND, 
+    PLUMB_TOKEN_BEGIN, 
+    PLUMB_TOKEN_END, 
+    PLUMB_TOKEN_INPUT, 
+    PLUMB_TOKEN_LOGIC, 
+    PLUMB_TOKEN_MODULE, 
+    PLUMB_TOKEN_NAND, 
+    PLUMB_TOKEN_NOR, 
+    PLUMB_TOKEN_NOT, 
+    PLUMB_TOKEN_OR, 
+    PLUMB_TOKEN_OUTPUT, 
+    PLUMB_TOKEN_XNOR,
+    PLUMB_TOKEN_XOR
     // End Keywords
 } PlumbTokenType;
 
