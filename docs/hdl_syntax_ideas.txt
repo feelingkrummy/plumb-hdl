@@ -6,11 +6,11 @@ example : logic[0 :> ADDR_W-1 ] // equivalent to "to" in VHDL
 
 // IO Bundle with parameters
 @io bundle avalon_mm_slave < ADDR_W : integer, DATA_W : integer > begin 
-    address     : input logic[ADDR_W-1:0];
-    read        : input logic;
-    readdata    : output logic[DATA_W-1:0];
-    write       : input logic;
-    writedata   : input logic[DATA_W-1:0];
+	address		: input logic[ADDR_W-1:0];
+	read		: input logic;
+	readdata	: output logic[DATA_W-1:0];
+	write		: input logic;
+	writedata	: input logic[DATA_W-1:0];
 end bundle;
 
 // Type Generics and Type Classes
@@ -23,12 +23,12 @@ The end user must decide which interface protocol they wish to natively support,
 What we should be able to do is something as follows:
 
 module FIR <
-    StreamingInterfaceSink : type,
-    StreamingInterfaceSource : type,
-    DATA_W : integer
+	StreamingInterfaceSink : type,
+	StreamingInterfaceSource : type,
+	DATA_W : integer
 > (
-    stream_in : StreamingInterfaceSink<DATA_W>,
-    stream_out : StreamingInterfaceSource<DATA_W>
+	stream_in : StreamingInterfaceSink<DATA_W>,
+	stream_out : StreamingInterfaceSource<DATA_W>
 );
 
 ... CODE HERE ...
@@ -45,12 +45,12 @@ This can be addressed by assigning both an AXIS and Avalon ST interface to a Typ
 the component may be designed around the TypeClass that can be one of several streaming interfaces.
 
 module FIR < 
-    StreamingInterfaceSink : StreamingTypeClass, <== Constrain with TypeClass
-    StreamingInterfaceSource : StreamingTypeClass,
-    DATA_W : integer
+	StreamingInterfaceSink : StreamingTypeClass, <== Constrain with TypeClass
+	StreamingInterfaceSource : StreamingTypeClass,
+	DATA_W : integer
 > (
-    stream_in : StreamingInterfaceSink<DATA_W>,
-    stream_out : StreamingInterfaceSource<DATA_W>
+	stream_in : StreamingInterfaceSink<DATA_W>,
+	stream_out : StreamingInterfaceSource<DATA_W>
 );
 
 ... CODE HERE ...
@@ -63,9 +63,9 @@ end module
 Module declarations should have explicit generic and port keywords to avoid ambiguity 
 
 module module_name <
-    generic_decl,
+	generic_decl,
 > (
-    port_decl,
+	port_decl,
 );
 
 when instantiated, the keywords are excluded

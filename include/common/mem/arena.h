@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,17 +20,17 @@ limitations under the License.
 #include <stdint.h>
 
 typedef struct MemArenaBlock {
-    struct MemArenaBlock *next_block;
-    size_t capacity;
-    uintptr_t prev_ptr;
-    uintptr_t offset_ptr;
-    uint8_t mem[];
+	struct MemArenaBlock *next_block;
+	size_t capacity;
+	uintptr_t prev_ptr;
+	uintptr_t offset_ptr;
+	uint8_t mem[];
 } MemArenaBlock;
 
 typedef struct MemArena {
-    size_t default_block_size;
-    MemArenaBlock *start_block;
-    MemArenaBlock *curr_block;
+	size_t default_block_size;
+	MemArenaBlock *start_block;
+	MemArenaBlock *curr_block;
 } MemArena;
 
 
