@@ -5,4 +5,4 @@ SRC_FILES="../src/common/str.c \
 	../src/plumb-elab/lex.c \
 	../src/plumb-elab/tokens.c"
 
-clang-16 -lcriterion -I../include $SRC_FILES 01-utf8.c 02-plumb-elab.c -o test
+clang -lcriterion -I../include $SRC_FILES 01-utf8.c 02-plumb-elab.c -o test

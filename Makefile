@@ -1,4 +1,4 @@
-CC = clang-14
+CC = clang
 AR = llvm-ar-14
 
 CC_FLAGS = --std=c11
