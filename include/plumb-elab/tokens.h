@@ -19,7 +19,7 @@ limitations under the License.
 
 #include <stdint.h>
 
-typedef enum PlumbTokenType {
+typedef enum {
 	PLUMB_TOKEN_INVALID = 0, 
 	PLUMB_TOKEN_EOF, 
 	
@@ -41,7 +41,7 @@ typedef enum PlumbTokenType {
 	PLUMB_TOKEN_STARSTAR, 
 	PLUMB_TOKEN_EQUAL, 
 	PLUMB_TOKEN_EQUALEQUAL, 
-	PLUMB_TOKEN_BANG, 
+	PLUMB_TOKEN_BANG,
 	PLUMB_TOKEN_BANGEQUAL, 
 	PLUMB_TOKEN_LEFTARROW, 
 	PLUMB_TOKEN_LEFTARROWEQUAL, 
@@ -54,17 +54,18 @@ typedef enum PlumbTokenType {
 	// These must be in alphabetical order
 	// so the is_keyword binary search works
 	// correctly
-	PLUMB_TOKEN_AND, 
-	PLUMB_TOKEN_BEGIN, 
-	PLUMB_TOKEN_END, 
-	PLUMB_TOKEN_INPUT, 
-	PLUMB_TOKEN_LOGIC, 
-	PLUMB_TOKEN_MODULE, 
-	PLUMB_TOKEN_NAND, 
-	PLUMB_TOKEN_NOR, 
-	PLUMB_TOKEN_NOT, 
-	PLUMB_TOKEN_OR, 
-	PLUMB_TOKEN_OUTPUT, 
+	PLUMB_TOKEN_AND,
+	PLUMB_TOKEN_BEGIN,
+	PLUMB_TOKEN_END,
+	PLUMB_TOKEN_INPUT,
+	PLUMB_TOKEN_LOGIC,
+	PLUMB_TOKEN_MOD,
+	PLUMB_TOKEN_MODULE,
+	PLUMB_TOKEN_NAND,
+	PLUMB_TOKEN_NOR,
+	PLUMB_TOKEN_NOT,
+	PLUMB_TOKEN_OR,
+	PLUMB_TOKEN_OUTPUT,
 	PLUMB_TOKEN_XNOR,
 	PLUMB_TOKEN_XOR
 	// End Keywords
@@ -87,6 +88,7 @@ typedef struct {
 	};
 } PlumbToken;
 
+/*
 typedef struct {
 	uint64_t cap;
 	uint64_t len;
@@ -94,5 +96,6 @@ typedef struct {
 } TokenList;
 
 void destroy_token_list(TokenList* list);
+*/
 
 #endif

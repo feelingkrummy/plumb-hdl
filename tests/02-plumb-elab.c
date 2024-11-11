@@ -9,7 +9,7 @@
 
 Test(plumb_elab, good_keywords) {
 
-	char* good_keywords_string = "and begin end input logic module nand nor not or output xnor xor";
+	char* good_keywords_string = "and begin end input logic mod module nand nor not or output xnor xor";
 	str8 good_keywords = {
 		.ptr=(uint8_t*)good_keywords_string,
 		.len=strlen(good_keywords_string)
@@ -21,6 +21,7 @@ Test(plumb_elab, good_keywords) {
 		PLUMB_TOKEN_END,
 		PLUMB_TOKEN_INPUT,
 		PLUMB_TOKEN_LOGIC,
+		PLUMB_TOKEN_MOD,
 		PLUMB_TOKEN_MODULE,
 		PLUMB_TOKEN_NAND,
 		PLUMB_TOKEN_NOR,
@@ -44,7 +45,7 @@ Test(plumb_elab, bad_keywords) {
 	const int MAX_ITER = 100;
 	int iter = 0;
 
-	char* bad_keywords_string = "tand bend in mod nort dont orr out xnr xr";
+	char* bad_keywords_string = "tand bend in modu nort dont orr out xnr xr";
 	str8 bad_keywords = {
 		.ptr=(uint8_t*)bad_keywords_string,
 		.len=strlen(bad_keywords_string)

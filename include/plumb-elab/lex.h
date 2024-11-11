@@ -34,6 +34,6 @@ typedef struct {
 PlumbLexer create_plumb_lexer(str8 source);
 PlumbToken plumb_lexer_next_token(PlumbLexer* lex);
 
-TokenList plumb_lexer_scan_entire_file(str8 source);
+// TokenList plumb_lexer_scan_entire_file(str8 source);
 
 #endif

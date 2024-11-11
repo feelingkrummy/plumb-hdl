@@ -2,17 +2,6 @@
 #define PLUMB_EXPR_H_
 
 typedef enum {
-	PLUMB_OP_PLUS, 
-	PLUMB_OP_MINUS, 
-	PLUMB_OP_DIV, 
-	PLUMB_OP_MULT, 
-	PLUMB_OP_POWER, 
-
-	PLUMB_TOKEN_EQUAL, 
-	PLUMB_TOKEN_EQUALEQUAL, 
-} PlumbOp;
-
-typedef enum {
 	PLUMB_EXPR_GROUPING,
 	PLUMB_EXPR_BINARY,
 	PLUMB_EXPR_UNARY,
@@ -25,12 +14,12 @@ typedef struct {
 
 typedef struct {
 	PlumbExpr* left;
-	PlumbOp op;
+	PlumbTokenType op;
 	PlumbExpr* right;
 } PlumbExprBinary;
 
 typedef struct {
-	PlumbOp op;
+	PlumbTokenType op;
 	PlumbExpr* right;
 } PlumbExprUnary;
 

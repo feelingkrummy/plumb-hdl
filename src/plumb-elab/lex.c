@@ -259,6 +259,7 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
 	return tok;
 }
 
+/*
 TokenList plumb_lexer_scan_entire_file(str8 src) {
 	PlumbLexer lex = create_plumb_lexer(src);
 	TokenList list = {0};
@@ -284,3 +285,4 @@ TokenList plumb_lexer_scan_entire_file(str8 src) {
 
 	return list;
 }
+*/

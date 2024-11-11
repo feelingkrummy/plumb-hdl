@@ -32,7 +32,7 @@ void print_error(
 		...
 );
 
-#define KASSERT(expr) \
+#define kassert(expr) \
 	do{ \
 		if (!(expr)) { \
 			print_error("", __FILE__, __LINE__, __func__, #expr);\
@@ -40,7 +40,7 @@ void print_error(
 		} \
 	}while(0)
 
-#define KASSERT_MSG(expr, message, ...) \
+#define kassert_msg(expr, message, ...) \
 	do{ \
 		if (!(expr)) { \
 			print_error(message, __FILE__, __LINE__, __func__, #expr, ##__VA_ARGS__);\
@@ -50,7 +50,7 @@ void print_error(
 
 #if KASSERT_DEBUG_ON
 
-	#define KASSERT_DEBUG(expr) \
+	#define kassert_debug(expr) \
 		do{ \
 			if (!(expr)) { \
 				print_error("", __FILE__, __LINE__, __func__, #expr);\
@@ -58,7 +58,7 @@ void print_error(
 			} \
 		}while(0)
 	
-	#define KASSERT_DEBUG_MSG(expr, message, ...) \
+	#define kassert_debug_msg(expr, message, ...) \
 		do{ \
 			if (!(expr)) { \
 				print_error(message, __FILE__, __LINE__, __func__, #expr, ##__VA_ARGS__);\
@@ -68,8 +68,8 @@ void print_error(
 
 #else
 
-	#define KASSERT_DEBUG(expr)
-	#define KASSERT_DEBUG_MSG(expr, message, ...)
+	#define kassert_debug(expr)
+	#define kassert_debug_msg(expr, message, ...)
 
 #endif
 

@@ -10,20 +10,20 @@ char* characters =
 ;
 
 const Utf8Cp expected[] = {
-	{ .val = 'A',	   .len = 1 },
-	{ .val = 'B',	   .len = 1 },
-	{ .val = 'C',	   .len = 1 },
-	{ .val = 'D',	   .len = 1 },
-	{ .val = 0xA3,	  .len = 2 },
-	{ .val = 0xB5,	  .len = 2 },
-	{ .val = 0xF8,	  .len = 2 },
+	{ .val = 'A',		.len = 1 },
+	{ .val = 'B',		.len = 1 },
+	{ .val = 'C',		.len = 1 },
+	{ .val = 'D',		.len = 1 },
+	{ .val = 0xA3,		.len = 2 },
+	{ .val = 0xB5,		.len = 2 },
+	{ .val = 0xF8,		.len = 2 },
 	{ .val = 0x16B7,	.len = 3 },
 	{ .val = 0x16C4,	.len = 3 },
 	{ .val = 0x1F20,	.len = 3 },
 	{ .val = 0x1F74,	.len = 3 },
-	{ .val = 0x1F600,   .len = 4 },
-	{ .val = 0x1F605,   .len = 4 },
-	{ .val = 0x1FAE1,   .len = 4 }
+	{ .val = 0x1F600,	.len = 4 },
+	{ .val = 0x1F605,	.len = 4 },
+	{ .val = 0x1FAE1,	.len = 4 }
 };
 
 Test(utf8, decode) {
