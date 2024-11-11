@@ -19,6 +19,8 @@ limitations under the License.
 
 #include <stdint.h>
 
+#include "common/str.h"
+
 typedef enum {
 	PLUMB_TOKEN_INVALID = 0, 
 	PLUMB_TOKEN_EOF, 

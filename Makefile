@@ -1,5 +1,5 @@
 CC = clang
-AR = llvm-ar-14
+AR = llvm-ar
 
 CC_FLAGS = --std=c11
 
@@ -9,7 +9,7 @@ LIB_DIR=build/libs
 #
 # Plumb Elab Lib
 #
-PLUMB_ELAB_OBJS=$(addprefix $(OBJ_DIR)/plumb-elab/,lex.o tokens.o)
+PLUMB_ELAB_OBJS=$(addprefix $(OBJ_DIR)/plumb-elab/,lex.o tokens.o expr.o parse.o)
 
 plumb-elab: $(LIB_DIR)/libplumb-elab.a $(LIB_DIR)/libcommon.a
 

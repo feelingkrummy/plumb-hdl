@@ -41,11 +41,11 @@ static void add_block(MemArena* self, size_t size) {
 			-1,
 			0
 		);
-	KASSERT_MSG((uintptr_t)new_block != -1, "mmap failed, abort!");
+	kassert_msg((uintptr_t)new_block != -1, "mmap failed, abort!");
 	*/
 
 	MemArenaBlock *new_block = (MemArenaBlock*)malloc(block_size);
-	KASSERT_MSG(new_block, "malloc failed, abort!");
+	kassert_msg(new_block, "malloc failed, abort!");
 
 	// Initalized new block
 	new_block->next_block = NULL;
@@ -69,7 +69,7 @@ static void destroy_all_blocks(MemArenaBlock *block) {
 		block->next_block = NULL;
 	}
 	// int err = munmap((void*)block, (block->capacity + sizeof(MemArenaBlock)));
-	// KASSERT_MSG(err != -1, "munmap failed, abort!");
+	// kassert_msg(err != -1, "munmap failed, abort!");
 	free((void*)block);
 }
 
@@ -98,11 +98,11 @@ MemArena mem_arena_init(size_t default_block_size) {
 			-1,
 			0
 		);
-	KASSERT_MSG((uintptr_t)new_block != -1, "mmap failed, abort!");
+	kassert_msg((uintptr_t)new_block != -1, "mmap failed, abort!");
 	*/
 
 	MemArenaBlock *new_block = (MemArenaBlock*)malloc(block_size);
-	KASSERT_MSG(new_block, "malloc failed, abort!");
+	kassert_msg(new_block, "malloc failed, abort!");
 
 	new_block->next_block = NULL;
 	new_block->capacity = block_size - sizeof(MemArenaBlock);
@@ -134,8 +134,8 @@ void mem_arena_deinit(MemArena *self) {
 }
 
 void* mem_arena_alloc(MemArena *self, size_t size, size_t alignment) {
-	KASSERT_MSG(is_power_of_two(alignment), "Alignment is not a power of two!"); 
-	KASSERT_MSG(self, "self pointer is null, abort!");
+	kassert_msg(is_power_of_two(alignment), "Alignment is not a power of two!"); 
+	kassert_msg(self, "self pointer is null, abort!");
 
 	// This is kind of hacky but it works
 	// After added large block to end we want to rewind
@@ -185,8 +185,8 @@ void* mem_arena_alloc(MemArena *self, size_t size, size_t alignment) {
 }
 
 void* mem_arena_realloc(MemArena *self, void *mem, size_t old_size, size_t new_size, size_t alignment) {
-	KASSERT_MSG(is_power_of_two(alignment), "Alignment is not a power of two!"); 
-	KASSERT_MSG(self, "Self pointer is null, abort!");
+	kassert_msg(is_power_of_two(alignment), "Alignment is not a power of two!"); 
+	kassert_msg(self, "Self pointer is null, abort!");
 
 	uintptr_t ptr_to_resize = (uintptr_t)mem;
 

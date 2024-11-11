@@ -22,6 +22,9 @@ PlumbExpr* plumb_parse_expr(PlumbParser* parser) {
 
 static PlumbExpr* parse_logic_expr(PlumbParser* parser) {
 	PlumbExpr* expr = parse_relational_expr(parser);
+	if ( expr == NULL ) {
+		return NULL;
+	}
 	while ( true ) {
 		switch( parser->token[0].type ) {
 			case PLUMB_TOKEN_AND:
@@ -36,6 +39,10 @@ static PlumbExpr* parse_logic_expr(PlumbParser* parser) {
 				new->binary.op = token[0].type;
 				consume_token(parser);
 				new->binary.right = parse_relational_expr(parser);
+				if ( new->binary.right == NULL ) {
+					plumb_expr_free(new->binary.left);
+					return NULL;
+				}
 				expr = new;
 				break;
 			default:
@@ -46,6 +53,9 @@ static PlumbExpr* parse_logic_expr(PlumbParser* parser) {
 
 static PlumbExpr* parse_relational_expr(PlumbParser* parser) {
 	PlumbExpr* expr = parse_add_sub_expr(parser);
+	if ( expr == NULL ) {
+		return NULL;
+	}
 	while ( true ) {
 		switch ( parser->token[0].type ) {
 			case PLUMB_TOKEN_EQUALEQUAL:
@@ -60,6 +70,10 @@ static PlumbExpr* parse_relational_expr(PlumbParser* parser) {
 				new->binary.op = token[0].type;
 				consume_token(parser);
 				new->binary.right = parse_add_sub_expr(parser);
+				if ( new->binary.right == NULL ) {
+					plumb_expr_free(new->binary.left);
+					return NULL;
+				}
 				expr = new;
 			default:
 				return expr;
@@ -69,6 +83,9 @@ static PlumbExpr* parse_relational_expr(PlumbParser* parser) {
 
 static PlumbExpr* parse_add_sub_expr(PlumbParser* parser) {
 	PlumbExpr* expr = parse_mult_div_expr(parser);
+	if ( expr == NULL ) {
+		return NULL;
+	}
 	while ( true ) {
 		if ( parser->token[0].type == PLUMB_TOKEN_PLUS || parser->token[0].type == PLUMB_TOKEN_MINUS ) {
 			PlumbExpr* new = calloc(1, sizeof(PlumbExpr));
@@ -77,6 +94,10 @@ static PlumbExpr* parse_add_sub_expr(PlumbParser* parser) {
 			new->binary.op = token[0].type;
 			consume_token(parser);
 			new->binary.right = parse_mult_div_expr(parser);
+			if ( new->binary.right == NULL ) {
+				plumb_expr_free(new->binary.left);
+				return NULL;
+			}
 			expr = new;
 		} else {
 			return expr;
@@ -86,6 +107,9 @@ static PlumbExpr* parse_add_sub_expr(PlumbParser* parser) {
 
 static PlumbExpr* parse_mult_div_expr(PlumbParser* parser) {
 	PlumbExpr* expr = parse_power_expr(parser);
+	if ( expr == NULL ) {
+		return NULL;
+	}
 	while ( true ) {
 		switch ( parser->token[0].type ) {
 			case PLUMB_TOKEN_STAR:
@@ -97,6 +121,10 @@ static PlumbExpr* parse_mult_div_expr(PlumbParser* parser) {
 				new->binary.op = token[0].type;
 				consume_token(parser);
 				new->binary.right = parse_power_expr(parser);
+				if ( new->binary.right == NULL ) {
+					plumb_expr_free(new->binary.left);
+					return NULL;
+				}
 				expr = new;
 			default:
 				return expr;
@@ -106,6 +134,9 @@ static PlumbExpr* parse_mult_div_expr(PlumbParser* parser) {
 
 static PlumbExpr* parse_power_expr(PlumbParser* parser) {
 	PlumbExpr* expr = parse_unary_expr(parser);
+	if ( expr == NULL ) {
+		return NULL;
+	}
 	while ( true ) {
 		if ( parser->token[0].type == PLUMB_TOKEN_POWER ) {
 			PlumbExpr* new = calloc(1, sizeof(PlumbExpr));
@@ -114,6 +145,10 @@ static PlumbExpr* parse_power_expr(PlumbParser* parser) {
 			new->binary.op = token[0].type;
 			consume_token(parser);
 			new->binary.right = parse_unary_expr(parser);
+			if ( new->binary.right == NULL ) {
+				plumb_expr_free(new->binary.left);
+				return NULL;
+			}
 			expr = new;
 		} else {
 			return expr;
@@ -136,7 +171,22 @@ static PlumbExpr* parse_unary_expr(PlumbParser* parser) {
 			new->unary.op = parser->token[0].type;
 			consume_token(parser);
 			new->unary.right = parse_primary_expr(parser);
+			if (new->unary.right == NULL) {
+				free(new);
+				return NULL;
+			}
 		default:
 			return parse_primary_expr(parser);
 	}
 }
+
+static PlumbExpr* parse_primary_expr(PlumbParser* parser) {
+	if ( parse->token[0].type == PLUMB_TOKEN_IDENT ) {
+		PlumbExpr* expr = calloc(1, sizeof(PlumbExpr));
+		expr->type = PLUMB_EXPR_VARIABLE;
+		expr->varaible.name = token[0].ident;
+		consume_token(parser);
+		return expr;
+	}
+	return NULL;
+};
