@@ -15,7 +15,6 @@ const str8 plumbtokentype_str8[] = {
 	[PLUMB_TOKEN_RIGHTBRACKET]		= STR8("]"), 
 	[PLUMB_TOKEN_PLUS]				= STR8("+"), 
 	[PLUMB_TOKEN_MINUS]				= STR8("-"), 
-	[PLUMB_TOKEN_SLASH]				= STR8("/"), 
 	[PLUMB_TOKEN_COLON]				= STR8(":"), 
 	[PLUMB_TOKEN_SEMICOLON]			= STR8(";"), 
 
@@ -23,8 +22,8 @@ const str8 plumbtokentype_str8[] = {
 	[PLUMB_TOKEN_STARSTAR]			= STR8("**"), 
 	[PLUMB_TOKEN_EQUAL]				= STR8("="), 
 	[PLUMB_TOKEN_EQUALEQUAL]		= STR8("=="),
-	[PLUMB_TOKEN_BANG]				= STR8("!"),
-	[PLUMB_TOKEN_BANGEQUAL]			= STR8("!="),
+	[PLUMB_TOKEN_SLASH]				= STR8("/"), 
+	[PLUMB_TOKEN_SLASHEQUAL]		= STR8("/="),
 	[PLUMB_TOKEN_LEFTARROW]			= STR8(">"),
 	[PLUMB_TOKEN_LEFTARROWEQUAL]	= STR8(">="),
 	[PLUMB_TOKEN_RIGHTARROW]		= STR8("<"),

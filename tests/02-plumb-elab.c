@@ -65,7 +65,7 @@ Test(plumb_elab, bad_keywords) {
 }
 
 Test(plumb_elab, single_char_tokens) {
-	str8 single_char_test = STR8("(){}[]+-/:;");
+	str8 single_char_test = STR8("(){}[]+-:;");
 
 	PlumbTokenType expected_types[] = {
 		PLUMB_TOKEN_LEFTPAREN, 
@@ -93,19 +93,19 @@ Test(plumb_elab, single_char_tokens) {
 }
 
 Test(plumb_elab, double_char_tokens) {
-	str8 single_char_test = STR8("* ** = == ! != < <= > >=");
+	str8 single_char_test = STR8("* ** = == / /= < <= > >=");
 
 	PlumbTokenType expected_types[] = {
-		PLUMB_TOKEN_STAR, 
-		PLUMB_TOKEN_STARSTAR, 
-		PLUMB_TOKEN_EQUAL, 
-		PLUMB_TOKEN_EQUALEQUAL, 
-		PLUMB_TOKEN_BANG, 
-		PLUMB_TOKEN_BANGEQUAL, 
-		PLUMB_TOKEN_LEFTARROW, 
-		PLUMB_TOKEN_LEFTARROWEQUAL, 
-		PLUMB_TOKEN_RIGHTARROW, 
-		PLUMB_TOKEN_RIGHTARROWEQUAL, 
+		PLUMB_TOKEN_STAR,
+		PLUMB_TOKEN_STARSTAR,
+		PLUMB_TOKEN_EQUAL,
+		PLUMB_TOKEN_EQUALEQUAL,
+		PLUMB_TOKEN_SLASH,
+		PLUMB_TOKEN_SLASHEQUAL,
+		PLUMB_TOKEN_LEFTARROW,
+		PLUMB_TOKEN_LEFTARROWEQUAL,
+		PLUMB_TOKEN_RIGHTARROW,
+		PLUMB_TOKEN_RIGHTARROWEQUAL,
 	};
 	int expected_len = sizeof(expected_types)/sizeof(PlumbTokenType);
 

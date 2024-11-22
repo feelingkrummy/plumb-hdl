@@ -15,37 +15,37 @@ limitations under the License.
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "plumb-elab/lex.h"
 
 static void advance(PlumbLexer* lex) {
 	lex->loc.col += 1;
-	lex->start_pos += lex->c[0].len;
+	// Increase current by 1 and move c[1] to c[0]
+	lex->current += 1;
 	lex->c[0] = lex->c[1];
-	Utf8Cp cp = utf8_decode(lex->src.ptr + lex->decode_pos);
-	uint64_t new_decode_pos = lex->decode_pos + cp.len;
-	if (cp.val != UINT32_MAX || new_decode_pos < lex->src.len) {
-		// If we don't have a decode error, advance the decode_pos
-		// If we do have a deocde error, don't advance, lexer has errored
-		// lex->decode_pos += cp.len;
-		lex->decode_pos = new_decode_pos;
+	// If next is still in bounds increment and get next
+	// otherwise, assign EOF
+	if ( lex->next < lex->src.len ) {
+		lex->next += 1;
+		lex->c[1] = lex->src.ptr[lex->next];
+	} else {
+		lex->c[1] = EOF;
 	}
-	lex->c[1] = cp;
 }
 
 static void skip_whitespace(PlumbLexer* lex) {
-	while ( utf8_isspace(lex->c[0]) ) {
-		int val = lex->c[0].val;
-		advance(lex);
-		if ( val == '\n' ) {
+	while ( isspace(lex->c[0]) ) {
+		if ( lex->c[0] == '\n' ) {
 			lex->loc.line += 1;
-			lex->loc.col = 0;
+			lex->loc.col = 1;
 		}
+		advance(lex);
 	}
 }
 
 static int is_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
-	switch( lex->c[0].val ) {
+	switch( lex->c[0] ) {
 		case '(' :
 			token_out->type = PLUMB_TOKEN_LEFTPAREN;
 			token_out->loc = lex->loc;
@@ -86,11 +86,6 @@ static int is_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 			token_out->loc = lex->loc;
 			advance(lex);
 			return 1;
-		case '/' : 
-			token_out->type = PLUMB_TOKEN_SLASH;
-			token_out->loc = lex->loc;
-			advance(lex);
-			return 1;
 		case ':' : 
 			token_out->type = PLUMB_TOKEN_COLON;
 			token_out->loc = lex->loc;
@@ -107,9 +102,9 @@ static int is_single_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 }
 
 static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
-	switch( lex->c[0].val ) {
+	switch( lex->c[0] ) {
 		case '*' :
-			if (lex->c[1].val == '*') {
+			if (lex->c[1] == '*') {
 				token_out->type = PLUMB_TOKEN_STARSTAR;
 				token_out->loc = lex->loc;
 				advance(lex);
@@ -120,8 +115,20 @@ static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 				advance(lex);
 			}
 			return 1;
+		case '/' :
+			if (lex->c[1] == '=') {
+				token_out->type = PLUMB_TOKEN_SLASHEQUAL;
+				token_out->loc = lex->loc;
+				advance(lex);
+				advance(lex);
+			} else {
+				token_out->type = PLUMB_TOKEN_SLASH;
+				token_out->loc = lex->loc;
+				advance(lex);
+			}
+			return 1;
 		case '=' :
-			if (lex->c[1].val == '=') {
+			if (lex->c[1] == '=') {
 				token_out->type = PLUMB_TOKEN_EQUALEQUAL;
 				token_out->loc = lex->loc;
 				advance(lex);
@@ -132,20 +139,8 @@ static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 				advance(lex);
 			}
 			return 1;
-		case '!' :
-			if (lex->c[1].val == '=') {
-				token_out->type = PLUMB_TOKEN_BANGEQUAL;
-				token_out->loc = lex->loc;
-				advance(lex);
-				advance(lex);
-			} else {
-				token_out->type = PLUMB_TOKEN_BANG;
-				token_out->loc = lex->loc;
-				advance(lex);
-			}
-			return 1;
 		case '<' :
-			if (lex->c[1].val == '=') {
+			if (lex->c[1] == '=') {
 				token_out->type = PLUMB_TOKEN_LEFTARROWEQUAL;
 				token_out->loc = lex->loc;
 				advance(lex);
@@ -157,7 +152,7 @@ static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 			}
 			return 1;
 		case '>' :
-			if (lex->c[1].val == '=') {
+			if (lex->c[1] == '=') {
 				token_out->type = PLUMB_TOKEN_RIGHTARROWEQUAL;
 				token_out->loc = lex->loc;
 				advance(lex);
@@ -175,14 +170,14 @@ static int is_double_char_token(PlumbLexer* lex, PlumbToken* token_out) {
 
 static str8 get_lexeme(PlumbLexer* lex) {
 	str8 lexeme = {
-		.ptr = lex->src.ptr + lex->start_pos, // Pointer arithmetic! D:
+		.ptr = lex->src.ptr + lex->current, // Pointer arithmetic! D:
 		.len = 0
 	};
 
 	do {
-		lexeme.len += lex->c[0].len;
+		lexeme.len += 1;
 		advance(lex);
-	} while ( utf8_isalphanumeric(lex->c[0]) || (lex->c[0].val == '_') );
+	} while ( isalnum(lex->c[0]) || (lex->c[0] == '_') );
 
 	return lexeme;
 }
@@ -219,8 +214,18 @@ PlumbLexer create_plumb_lexer(str8 src) {
 	advance(&lex);
 	advance(&lex);
 
-	lex.start_pos = 0;
+	// Set current to 0
+	lex.current = 0;
 
+	printf("Lex: \n");
+	printf("	current: %lu\n", lex.current);
+	printf("	next: %lu\n", lex.next);
+	printf("	loc:\n");
+	printf("		line: %d\n", lex.loc.line);
+	printf("		col: %d\n", lex.loc.col);
+	printf("	c[0]: %d, %c\n", lex.c[0], lex.c[0]);
+	printf("	c[1]: %d, %c\n", lex.c[1], lex.c[1]);
+	
 	return lex;
 }
 
@@ -229,7 +234,7 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
 
 	skip_whitespace(lex);
 
-	if ( lex->c[0].val == 0 ) {
+	if ( lex->c[0] == EOF ) {
 		tok.type = PLUMB_TOKEN_EOF;
 		tok.loc = lex->loc;
 		return tok;
@@ -243,8 +248,9 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
 		return tok;
 	}
 
-	if ( utf8_isalpha(lex->c[0]) || (lex->c[0].val == '_') ) {
+	if ( isalpha(lex->c[0]) || (lex->c[0] == '_') ) {
 		str8 lexeme = get_lexeme(lex);
+		printf("Lexeme : %*s\n", (int)lexeme.len, lexeme.ptr);
 		if ( is_keyword(lex, lexeme, &tok) ) {
 			return tok;
 		}
