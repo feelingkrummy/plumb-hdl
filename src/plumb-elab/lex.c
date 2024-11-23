@@ -27,8 +27,8 @@ static void advance(PlumbLexer* lex) {
 	// If next is still in bounds increment and get next
 	// otherwise, assign EOF
 	if ( lex->next < lex->src.len ) {
-		lex->next += 1;
 		lex->c[1] = lex->src.ptr[lex->next];
+		lex->next += 1;
 	} else {
 		lex->c[1] = EOF;
 	}
@@ -217,15 +217,6 @@ PlumbLexer create_plumb_lexer(str8 src) {
 	// Set current to 0
 	lex.current = 0;
 
-	printf("Lex: \n");
-	printf("	current: %lu\n", lex.current);
-	printf("	next: %lu\n", lex.next);
-	printf("	loc:\n");
-	printf("		line: %d\n", lex.loc.line);
-	printf("		col: %d\n", lex.loc.col);
-	printf("	c[0]: %d, %c\n", lex.c[0], lex.c[0]);
-	printf("	c[1]: %d, %c\n", lex.c[1], lex.c[1]);
-	
 	return lex;
 }
 
@@ -250,7 +241,6 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
 
 	if ( isalpha(lex->c[0]) || (lex->c[0] == '_') ) {
 		str8 lexeme = get_lexeme(lex);
-		printf("Lexeme : %*s\n", (int)lexeme.len, lexeme.ptr);
 		if ( is_keyword(lex, lexeme, &tok) ) {
 			return tok;
 		}
@@ -264,31 +254,3 @@ PlumbToken plumb_lexer_next_token(PlumbLexer* lex) {
 	tok.loc = lex->loc;
 	return tok;
 }
-
-/*
-TokenList plumb_lexer_scan_entire_file(str8 src) {
-	PlumbLexer lex = create_plumb_lexer(src);
-	TokenList list = {0};
-
-	// This is a guess as to how many tokens we'll need
-	// If text is ASCII (as it likely will) we'll only need
-	// to resize once or twice
-	// If the text is all 4 byte UTF-8 chars (highly unlikely)
-	// we only use half this memory
-	uint64_t init_cap = src.len/2;
-	list.cap = init_cap;
-	list.tokens = calloc(init_cap, sizeof(PlumbToken));
-
-	PlumbToken tok = {0};
-	do {
-		tok = plumb_lexer_next_token(&lex);
-		list.tokens[list.len++] = tok;
-		if (list.len == list.cap) {
-			list.cap += list.cap/2;
-			list.tokens = realloc(list.tokens, list.cap*sizeof(PlumbToken));
-		}
-	} while( tok.type != PLUMB_TOKEN_EOF && tok.type != PLUMB_TOKEN_INVALID );
-
-	return list;
-}
-*/
