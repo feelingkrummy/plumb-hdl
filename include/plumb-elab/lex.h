@@ -20,7 +20,6 @@ limitations under the License.
 #include <stdint.h>
 
 #include "common/str.h"
-#include "common/utf8.h"
 #include "tokens.h"
 
 typedef struct {
