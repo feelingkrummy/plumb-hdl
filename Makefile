@@ -15,7 +15,7 @@ plumb-elab: $(LIB_DIR)/libplumb-elab.a $(LIB_DIR)/libcommon.a
 
 # Build Plumb Elab static lib
 $(LIB_DIR)/libplumb-elab.a : $(PLUMB_ELAB_OBJS) | $(LIB_DIR)
-	$(AR) rc $(LIB_DIR)/libplumb-elab.a $(PLUMB_ELAB_OBJS)
+	$(AR) -rc $(LIB_DIR)/libplumb-elab.a $(PLUMB_ELAB_OBJS)
 
 # Build Plumb Elab Object Files
 $(OBJ_DIR)/plumb-elab/%.o : src/plumb-elab/%.c include/plumb-elab/%.h | $(OBJ_DIR)/plumb-elab
@@ -28,14 +28,14 @@ $(OBJ_DIR)/plumb-elab: | $(OBJ_DIR)
 #
 # Common Lib
 #
-COMMON_OBJS=$(addprefix $(OBJ_DIR)/common/,kassert.o str.o utf8.o) \
+COMMON_OBJS=$(addprefix $(OBJ_DIR)/common/,kassert.o str.o) \
 			$(addprefix $(OBJ_DIR)/common/mem-,arena.o mem.o)
 
 common: $(LIB_DIR)/libcommon.a
 
 # Build Common static lib
 $(LIB_DIR)/libcommon.a : $(COMMON_OBJS) | $(LIB_DIR)
-	$(AR) rc $(LIB_DIR)/libcommon.a $(COMMON_OBJS)
+	$(AR) -rc $(LIB_DIR)/libcommon.a $(COMMON_OBJS)
 
 # Build Common Object Files
 $(OBJ_DIR)/common/%.o : src/common/%.c include/common/%.h | $(OBJ_DIR)/common

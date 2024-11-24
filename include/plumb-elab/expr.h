@@ -8,19 +8,11 @@ typedef enum {
 	PLUMB_EXPR_VARIABLE
 } PlumbExprType;
 
-typedef struct {
-	PlumbExprType type;
-	union {
-		PlumbExprGrouping group;
-		PlumbExprBinary binary;
-		PlumbExprUnary unary;
-		PlumbExprVariable variable;
-	}
-} PlumbExpr;
+typedef struct PlumbExpr PlumbExpr;
 
 typedef struct {
 	PlumbExpr* expr;
-} PlumbExprGrouping 
+} PlumbExprGrouping;
 
 typedef struct {
 	PlumbExpr* left;
@@ -36,6 +28,16 @@ typedef struct {
 typedef struct {
 	str8 name;
 } PlumbExprVariable;
+
+struct PlumbExpr {
+	PlumbExprType type;
+	union {
+		PlumbExprGrouping group;
+		PlumbExprBinary binary;
+		PlumbExprUnary unary;
+		PlumbExprVariable variable;
+	};
+};
 
 
 void plumb_expr_free(PlumbExpr* expr);

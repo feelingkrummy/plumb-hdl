@@ -6,9 +6,9 @@
 void plumb_expr_free(PlumbExpr* expr) {
 	switch(expr->type) {
 		case PLUMB_EXPR_GROUPING:
-			if (expr->grouping.group.expr != NULL) {
+			if (expr->group.expr != NULL) {
 				plumb_expr_free(expr);
-				expr->grouping.group.expr = NULL;
+				expr->group.expr = NULL;
 			}
 			free(expr);
 			return;
